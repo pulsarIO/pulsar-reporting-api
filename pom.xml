@@ -25,7 +25,6 @@
 		<commons.logging>1.1.1</commons.logging>
 		<guava.version>18.0</guava.version>
 		<jackson.version>2.2.3</jackson.version>
-		<mysql.version>5.1.33</mysql.version>
 		<foundationdb.version>1.5.0</foundationdb.version>
 		<spymemcached.version>2.11.4</spymemcached.version>
 		<ehcache.version>2.10.0</ehcache.version>
@@ -177,14 +176,6 @@
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-jcl</artifactId>
 				<version>${slf4j.version}</version>
-			</dependency>
-
-
-			<!-- MySQL driver-->
-			<dependency>
-				<groupId>mysql</groupId>
-				<artifactId>mysql-connector-java</artifactId>
-				<version>${mysql.version}</version>
 			</dependency>
 			 
 			<!-- presto -->
