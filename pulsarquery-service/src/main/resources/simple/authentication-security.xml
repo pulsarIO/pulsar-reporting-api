@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright © 2012-2015 eBay Software Foundation
+This program is dual licensed under the MIT and Apache 2.0 licenses.
+Please see LICENSE for more information.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+             http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd
+             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<bean id="pulsarUserDetailsService"
+		class="com.ebay.pulsar.analytics.security.spring.PulsarUserDetailService" />
+
+	<security:http create-session="stateless" pattern="/**" >
+		<security:intercept-url pattern="/prapi/**" />
+		<security:http-basic entry-point-ref="basicAuthenticationEntryPoint"/>
+		<security:anonymous username="Anonymous" key="Anonymous" />
+		<security:csrf disabled="true" />
+	</security:http>
+	<security:authentication-manager erase-credentials="false" alias="authenticationManager">
+		<security:authentication-provider user-service-ref="pulsarUserDetailsService" >
+			<security:password-encoder hash="md5" />
+		</security:authentication-provider>
+		<security:authentication-provider ref="anonymousAuthenticationProvider" />
+	</security:authentication-manager>
+	<bean id="basicAuthenticationEntryPoint" 
+       class="com.ebay.pulsar.analytics.security.spring.PlainTextBasicAuthenticationEntryPoint">
+    	<property name="realmName" value="Pulsar Query" />
+ 	</bean>
+</beans>

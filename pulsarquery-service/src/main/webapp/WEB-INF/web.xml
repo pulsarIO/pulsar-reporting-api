@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright © 2012-2015 eBay Software Foundation
+This program is licensed under the Apache 2.0 licenses.
+Please see LICENSE for more information.
+  -->
+  
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+	<module-name>data-analytics-api</module-name>
+	<listener>
+		<listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
+	</listener>
+
+	<listener>
+		<listener-class>org.jboss.resteasy.plugins.spring.SpringContextLoaderListener</listener-class>
+	</listener>
+	
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+		    classpath:env.xml
+			classpath:context.xml
+			classpath:query-config.xml
+			classpath:pulsar-datasource.xml
+			classpath:simple/restmetric-config.xml
+			classpath:simple/pulsarholp-config.xml
+			classpath:simple/authentication-security.xml
+		</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>classpath:log4j.properties</param-value>
+	</context-param>
+
+
+	<servlet>
+		<servlet-name>deployServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>deployServlet</servlet-name>
+		<url-pattern>/admin/*</url-pattern>
+	</servlet-mapping>
+	
+	<filter>
+		<filter-name>cors</filter-name>
+		<filter-class>com.ebay.pulsar.analytics.filters.ApiOriginFilter</filter-class>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>cors</filter-name>
+		<url-pattern>/prapi/v2/*</url-pattern>
+	</filter-mapping>
+	<!--Hook into spring security -->
+	<filter>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>springSecurityFilterChain</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<servlet>
+		<servlet-name>PulsarDataAnalytics</servlet-name>
+		<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>PulsarDataAnalytics</servlet-name>
+		<url-pattern>/prapi/v2/*</url-pattern>
+	</servlet-mapping>
+
+	<context-param>
+		<param-name>resteasy.servlet.mapping.prefix</param-name>
+		<param-value>/prapi/v2/</param-value>
+	</context-param>
+</web-app>

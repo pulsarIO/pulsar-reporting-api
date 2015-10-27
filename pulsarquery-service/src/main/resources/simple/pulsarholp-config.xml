@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright © 2012-2015 eBay Software Foundation
+This program is dual licensed under the MIT and Apache 2.0 licenses.
+Please see LICENSE for more information.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:c="http://www.springframework.org/schema/c"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd " default-lazy-init="false">
+	<bean id="PulsarDataSourceConfiguration" class="com.ebay.pulsar.analytics.datasource.PulsarDataSourceConfiguration">
+		<constructor-arg index="0" type="java.lang.String" value="PULSARHOLAP" />
+		<!-- RTOLAP datasource name, configure to a Druid data source name-->
+		<constructor-arg index="1" type="java.lang.String" value="trackingdruid" />
+		<property name="pulsarTableConfiguration" ref="ListTables" />
+		<property name="routConfiguration" >
+			<map>
+				<entry key="event">
+					<bean class="com.ebay.pulsar.analytics.datasource.PulsarDataSourceRule">
+						 <constructor-arg index="0" value="druid"/>
+						 <constructor-arg index="1" value="P1M"/>
+					</bean>
+				</entry>
+				<entry key="session">
+					<bean class="com.ebay.pulsar.analytics.datasource.PulsarDataSourceRule">
+						 <constructor-arg index="0" value="druid"/>
+						 <constructor-arg index="1" value="P1M"/>
+					</bean>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="ListTables" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<ref bean="TableEvent"/>
+				<ref bean="TableSession"/>
+			</list>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="TableEvent" class="com.ebay.pulsar.analytics.datasource.PulsarTable">
+		<property name="tableName" value="event" />
+		<property name="tableNameAlias" value="pulsar_event,pc_event" />
+		<property name="dimensions">
+			<list>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="page" />
+					<property name="alias" value="pageid" />
+				</bean>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="site" />
+					<property name="type" value="-5" />
+					<property name="alias" value="tenantsite" />
+				</bean>
+			</list>
+		</property>
+		<property name="metrics">
+			<list>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="pageview" />
+					<property name="alias" value="count,page_view" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="TableSession" class="com.ebay.pulsar.analytics.datasource.PulsarTable">
+		<property name="tableName" value="session" />
+		<property name="tableNameAlias" value="pulsar_session,pc_session" />
+		<property name="dimensions">
+			<list>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="site" />
+					<property name="type" value="-5" />
+					<property name="alias" value="tenantsite" />
+				</bean>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="entrypage" />
+					<property name="type" value="-5" />
+				</bean>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="exitpage" />
+					<property name="type" value="-5" />
+				</bean>
+			</list>
+		</property>
+		<property name="metrics">
+			<list>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="session" />
+					<property name="alias" value="count,streamid" />
+				</bean>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="sessionduration" />
+					<property name="alias" value="sessionduration_ag,absduration" />
+				</bean>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="totalpagect" />
+					<property name="alias" value="totalpagect_ag,serveventcnt" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="RestQueryProcessor" class="com.ebay.pulsar.analytics.holap.query.RestQueryProcessorImpl">
+        <property name="cacheProvider" ref="CacheProvider" />
+        <property name="pulsarRestMetricRegistry" ref="PulsarRestMetricRegistry"/>
+    </bean>
+    
+    <bean id="PulsarDataSourceProviderFactory" factory-method="getInstance" class="com.ebay.pulsar.analytics.datasource.PulsarDataSourceProviderFactory">
+    	 <property name="restProcessor" ref="RestQueryProcessor" />
+    </bean>
+</beans>

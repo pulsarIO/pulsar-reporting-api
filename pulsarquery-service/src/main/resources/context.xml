@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright © 2012-2015 eBay Software Foundation
+This program is dual licensed under the MIT and Apache 2.0 licenses.
+Please see LICENSE for more information.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:metrics="http://www.ryantenney.com/schema/metrics" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:cache="http://www.springframework.org/schema/cache" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/task
+    http://www.springframework.org/schema/task/spring-task.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc.xsd
+    http://www.springframework.org/schema/cache
+    http://www.springframework.org/schema/cache/spring-cache.xsd
+    http://www.springframework.org/schema/jdbc
+    http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+
+	<!--  Allow proxys -->
+    <!-- Cache Config -->
+    <!--
+    <cache:annotation-driven cache-manager="cacheManager" />
+    -->
+    <!-- Do the component scan path -->
+    <context:component-scan base-package="com.ebay.pulsar.analytics.resources" />
+    <context:component-scan base-package="com.ebay.pulsar.analytics.response" />
+
+    <context:component-scan base-package="com.ebay.pulsar.analytics.service" />
+    <bean class="com.ebay.pulsar.analytics.resources.PulsarQueryResource"/>
+    <bean class="com.ebay.pulsar.analytics.resources.PermissionControlResource"/>
+<!--
+  -->
+
+</beans>

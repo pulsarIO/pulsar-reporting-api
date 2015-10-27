@@ -1,0 +1,643 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright © 2012-2015 eBay Software Foundation
+This program is dual licensed under the MIT and Apache 2.0 licenses.
+Please see LICENSE for more information.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd " default-lazy-init="false">
+
+	<!--
+	======================================================================
+	== Define metric "activeusers" Druid Aggregates
+	======================================================================
+	  -->
+
+	<bean id="aggrActiveUsers" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.HyperUniqueAggregator">
+		<constructor-arg type="java.lang.String" value="activeusers"/>
+		<constructor-arg type="java.lang.String" value="guid_hll"/>
+	</bean>
+
+	<bean id="eventRegexBES" class="com.ebay.pulsar.analytics.metricstore.druid.filter.RegexFilter">
+		<constructor-arg type="java.lang.String" value="eventtype"/>
+		<constructor-arg type="java.lang.String" value="BES"/>
+	</bean>
+
+	<bean id="notFilterRegexBES" class="com.ebay.pulsar.analytics.metricstore.druid.filter.NotFilter">
+		<constructor-arg ref="eventRegexBES"/>
+	</bean>
+
+	<!--
+	======================================================================
+	== Define metric "activeusers" Here
+	======================================================================
+	  -->
+
+	<bean id="metricActiveUsers" class="com.ebay.pulsar.analytics.datasource.PulsarRestMetricMeta">
+		<property name="metricName" value="activeusers" />
+		<property name="metricEndpoints">
+			<set>
+				<value>realtime</value>
+				<value>core</value>
+			</set>
+		</property>
+		<property name="tableName" value="event" />
+		<property name="druidFilter">
+			<ref bean="notFilterRegexBES"/>
+		</property>
+		<property name="druidHaving"><null/></property>
+		<property name="druidAggregators">
+			<list>
+				<ref bean="aggrActiveUsers"/>
+			</list>
+		</property>
+		<property name="druidPostAggregators">
+			<null/>
+		</property>
+	</bean>
+
+	<!--
+	======================================================================
+	== Define metric "pageviews" Druid Aggregates
+	======================================================================
+	  -->
+
+	<bean id="aggrPageViews" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.LongSumAggregator">
+		<constructor-arg type="java.lang.String" value="pageviews"/>
+		<constructor-arg type="java.lang.String" value="count"/>
+	</bean>
+
+	<bean id="aggrTotalDwell" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.LongSumAggregator">
+		<constructor-arg type="java.lang.String" value="totaldwell"/>
+		<constructor-arg type="java.lang.String" value="dwell_ag"/>
+	</bean>
+
+	<bean id="eventSOJ" class="com.ebay.pulsar.analytics.metricstore.druid.filter.SelectorFilter">
+		<constructor-arg type="java.lang.String" value="eventtype"/>
+		<constructor-arg type="java.lang.String" value="SOJ"/>
+	</bean>
+
+	<!--
+	======================================================================
+	== Define metric "pageviews" Here
+	======================================================================
+	  -->
+
+	<bean id="metricPageViews" class="com.ebay.pulsar.analytics.datasource.PulsarRestMetricMeta">
+		<property name="metricName" value="pageviews" />
+		<property name="metricEndpoints">
+			<set>
+				<value>realtime</value>
+				<value>core</value>
+			</set>
+		</property>
+		<property name="tableName" value="event" />
+		<property name="druidFilter">
+			<ref bean="eventSOJ"/>
+		</property>
+		<property name="druidHaving"><null/></property>
+		<property name="druidAggregators">
+			<list>
+				<ref bean="aggrPageViews"/>
+				<ref bean="aggrTotalDwell"/>
+			</list>
+		</property>
+		<property name="druidPostAggregators">
+			<null/>
+		</property>
+	</bean>
+
+	<!--
+	======================================================================
+	== Define metric "screenviews" Druid Aggregates
+	======================================================================
+	  -->
+
+	<bean id="aggrScreenViews" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.LongSumAggregator">
+		<constructor-arg type="java.lang.String" value="screenviews"/>
+		<constructor-arg type="java.lang.String" value="count"/>
+	</bean>
+
+	<!--
+	======================================================================
+	== Define metric "screenviews" Here
+	======================================================================
+	  -->
+
+	<bean id="metricScreenViews" class="com.ebay.pulsar.analytics.datasource.PulsarRestMetricMeta">
+		<property name="metricName" value="screenviews" />
+		<property name="metricEndpoints">
+			<set>
+				<value>realtime</value>
+				<value>core</value>
+			</set>
+		</property>
+		<property name="tableName" value="event" />
+		<property name="druidFilter">
+			<ref bean="eventSOJ"/>
+		</property>
+		<property name="druidHaving"><null/></property>
+		<property name="druidAggregators">
+			<set>
+				<ref bean="aggrScreenViews"/>
+			</set>
+		</property>
+		<property name="druidPostAggregators">
+			<null/>
+		</property>
+	</bean>
+
+	<!--
+	======================================================================
+	== Define metric "pulsarevents" Druid Aggregates
+	======================================================================
+	  -->
+
+	<bean id="aggrPulsarEvents" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.LongSumAggregator">
+		<constructor-arg type="java.lang.String" value="pulsarevents"/>
+		<constructor-arg type="java.lang.String" value="count"/>
+	</bean>
+
+	<!--
+	======================================================================
+	== Define metric "pulsarevents" Here
+	======================================================================
+	  -->
+
+	<bean id="metricPulsarEvents" class="com.ebay.pulsar.analytics.datasource.PulsarRestMetricMeta">
+		<property name="metricName" value="pulsarevents" />
+		<property name="metricEndpoints">
+			<set>
+				<value>realtime</value>
+				<value>core</value>
+			</set>
+		</property>
+		<property name="tableName" value="event" />
+		<property name="druidFilter">
+			<ref bean="notFilterRegexBES"/>
+		</property>
+		<property name="druidHaving"><null/></property>
+		<property name="druidAggregators">
+			<list>
+				<ref bean="aggrPulsarEvents"/>
+			</list>
+		</property>
+		<property name="druidPostAggregators">
+			<null/>
+		</property>
+	</bean>
+
+	<!--
+	======================================================================
+	== Define metric "sessions" Druid Aggregates, PostAggregates, etc.
+	======================================================================
+	  -->
+
+	<bean id="longSumSessions" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.LongSumAggregator">
+		<constructor-arg type="java.lang.String" value="sessions"/>
+		<constructor-arg type="java.lang.String" value="count"/>
+	</bean>
+
+	<bean id="pageCtZero" class="com.ebay.pulsar.analytics.metricstore.druid.filter.SelectorFilter">
+		<constructor-arg type="java.lang.String" value="pagect"/>
+		<constructor-arg type="java.lang.String" value="0"/>
+	</bean>
+
+	<bean id="notFilterPageCtZero" class="com.ebay.pulsar.analytics.metricstore.druid.filter.NotFilter">
+		<constructor-arg ref="pageCtZero"/>
+	</bean>
+
+	<!-- Define "sessions" metric Aggregate "sessions" Here -->
+
+	<bean id="aggrSessions" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.FilteredAggregator">
+		<constructor-arg type="java.lang.String" value="sessions"/>
+		<constructor-arg ref="notFilterPageCtZero"/>
+		<constructor-arg ref="longSumSessions"/>
+	</bean>
+
+	<!-- Define "sessions" metric Aggregate "totalpages" Here -->
+
+	<bean id="aggrTotalPages" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.LongSumAggregator">
+		<constructor-arg type="java.lang.String" value="totalpages"/>
+		<constructor-arg type="java.lang.String" value="totalpagect_ag"/>
+	</bean>
+
+	<!-- Define "sessions" metric Aggregate "totalsessiondurations" Here -->
+
+	<bean id="aggrTotalSessionDurations" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.LongSumAggregator">
+		<constructor-arg type="java.lang.String" value="totalsessiondurations"/>
+		<constructor-arg type="java.lang.String" value="sessionduration_ag"/>
+	</bean>
+
+	<bean id="rvOne" class="com.ebay.pulsar.analytics.metricstore.druid.filter.SelectorFilter">
+		<constructor-arg type="java.lang.String" value="rv"/>
+		<constructor-arg type="java.lang.String" value="1"/>
+	</bean>
+
+	<bean id="notFilterRvOne" class="com.ebay.pulsar.analytics.metricstore.druid.filter.NotFilter">
+		<constructor-arg ref="rvOne"/>
+	</bean>
+
+	<bean id="listNotFilters" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<ref bean="notFilterPageCtZero"/>
+				<ref bean="notFilterRvOne"/>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="andFilter1" class="com.ebay.pulsar.analytics.metricstore.druid.filter.AndFilter">
+		<constructor-arg ref="listNotFilters"/>
+	</bean>
+
+	<!-- Define "sessions" metric Aggregate "newusers" Here -->
+
+	<bean id="longSumNewUsers" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.LongSumAggregator">
+		<constructor-arg type="java.lang.String" value="newusers"/>
+		<constructor-arg type="java.lang.String" value="count"/>
+	</bean>
+
+	<bean id="aggrNewUsers" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.FilteredAggregator">
+		<constructor-arg type="java.lang.String" value="newusers"/>
+		<constructor-arg ref="andFilter1"/>
+		<constructor-arg ref="longSumNewUsers"/>
+	</bean>
+
+	<bean id="longSumBounces" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.LongSumAggregator">
+		<constructor-arg type="java.lang.String" value="bounces"/>
+		<constructor-arg type="java.lang.String" value="count"/>
+	</bean>
+
+	<bean id="pageCtOne" class="com.ebay.pulsar.analytics.metricstore.druid.filter.SelectorFilter">
+		<constructor-arg type="java.lang.String" value="pagect"/>
+		<constructor-arg type="java.lang.String" value="1"/>
+	</bean>
+
+	<!-- Define "sessions" metric Aggregate "bounces" Here -->
+
+	<bean id="aggrBounces" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.FilteredAggregator">
+		<constructor-arg type="java.lang.String" value="bounces"/>
+		<constructor-arg ref="pageCtOne"/>
+		<constructor-arg ref="longSumBounces"/>
+	</bean>
+
+	<bean id="postFieldNewUsers" class="com.ebay.pulsar.analytics.metricstore.druid.postaggregator.FieldAccessorPostAggregator">
+		<constructor-arg type="java.lang.String" value="newusers"/>
+		<constructor-arg type="java.lang.String" value="newusers"/>
+	</bean>
+
+	<bean id="postFieldSessions" class="com.ebay.pulsar.analytics.metricstore.druid.postaggregator.FieldAccessorPostAggregator">
+		<constructor-arg type="java.lang.String" value="sessions"/>
+		<constructor-arg type="java.lang.String" value="sessions"/>
+	</bean>
+
+	<bean id="listPostFieldsNewSessionRate" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<ref bean="postFieldNewUsers"/>
+				<ref bean="postFieldSessions"/>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<!-- Define "sessions" metric PostAggregate "newsessionrate" Here -->
+
+	<bean id="postAggrNewSessionRate" class="com.ebay.pulsar.analytics.metricstore.druid.postaggregator.ArithmeticPostAggregator">
+		<constructor-arg type="java.lang.String" value="newsessionrate"/>
+		<constructor-arg type="java.lang.String" value="/"/>
+		<constructor-arg ref="listPostFieldsNewSessionRate"/>
+	</bean>
+
+	<bean id="postFieldBounces" class="com.ebay.pulsar.analytics.metricstore.druid.postaggregator.FieldAccessorPostAggregator">
+		<constructor-arg type="java.lang.String" value="bounces"/>
+		<constructor-arg type="java.lang.String" value="bounces"/>
+	</bean>
+
+	<bean id="listPostFieldsBounceRate" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<ref bean="postFieldBounces"/>
+				<ref bean="postFieldSessions"/>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<!-- Define "sessions" metric PostAggregate "newsessionrate" Here -->
+
+	<bean id="postAggrBounceRate" class="com.ebay.pulsar.analytics.metricstore.druid.postaggregator.ArithmeticPostAggregator">
+		<constructor-arg type="java.lang.String" value="bouncerate"/>
+		<constructor-arg type="java.lang.String" value="/"/>
+		<constructor-arg ref="listPostFieldsBounceRate"/>
+	</bean>
+
+	<bean id="postFieldTotalSessionDurations" class="com.ebay.pulsar.analytics.metricstore.druid.postaggregator.FieldAccessorPostAggregator">
+		<constructor-arg type="java.lang.String" value="totalsessiondurations"/>
+		<constructor-arg type="java.lang.String" value="totalsessiondurations"/>
+	</bean>
+
+	<bean id="listPostFieldsAvgDuration" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<ref bean="postFieldTotalSessionDurations"/>
+				<ref bean="postFieldSessions"/>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<!-- Define "sessions" metric PostAggregate "avgduration" Here -->
+
+	<bean id="postAggrAvgDuration" class="com.ebay.pulsar.analytics.metricstore.druid.postaggregator.ArithmeticPostAggregator">
+		<constructor-arg type="java.lang.String" value="avgduration"/>
+		<constructor-arg type="java.lang.String" value="/"/>
+		<constructor-arg ref="listPostFieldsAvgDuration"/>
+	</bean>
+
+	<bean id="postFieldTotalPages" class="com.ebay.pulsar.analytics.metricstore.druid.postaggregator.FieldAccessorPostAggregator">
+		<constructor-arg type="java.lang.String" value="totalpages"/>
+		<constructor-arg type="java.lang.String" value="totalpages"/>
+	</bean>
+
+	<bean id="listPostFieldsAvgPages" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<ref bean="postFieldTotalPages"/>
+				<ref bean="postFieldSessions"/>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<!-- Define "sessions" metric PostAggregate "avgpages" Here -->
+
+	<bean id="postAggrAvgPages" class="com.ebay.pulsar.analytics.metricstore.druid.postaggregator.ArithmeticPostAggregator">
+		<constructor-arg type="java.lang.String" value="avgpages"/>
+		<constructor-arg type="java.lang.String" value="/"/>
+		<constructor-arg ref="listPostFieldsAvgPages"/>
+	</bean>
+
+	<!--
+	======================================================================
+	== Define metric "sessions" Here
+	======================================================================
+	  -->
+
+	<bean id="metricSessions" class="com.ebay.pulsar.analytics.datasource.PulsarRestMetricMeta">
+		<property name="metricName" value="sessions" />
+		<property name="metricEndpoints">
+			<set>
+				<value>core</value>
+			</set>
+		</property>
+		<property name="tableName" value="session" />
+		<property name="druidFilter"><null/></property>
+		<property name="druidHaving"><null/></property>
+		<property name="druidAggregators">
+			<list>
+				<ref bean="aggrSessions"/>
+				<ref bean="aggrTotalPages"/>
+				<ref bean="aggrTotalSessionDurations"/>
+				<ref bean="aggrNewUsers"/>
+				<ref bean="aggrBounces"/>
+			</list>
+		</property>
+		<property name="druidPostAggregators">
+			<list>
+				<ref bean="postAggrNewSessionRate"/>
+				<ref bean="postAggrBounceRate"/>
+				<ref bean="postAggrAvgPages"/>
+				<ref bean="postAggrAvgDuration"/>
+			</list>
+		</property>
+	</bean>
+
+	<!--
+	======================================================================
+	== Define "newusers" metric
+	======================================================================
+	  -->
+
+	<bean id="metricNewUsers" class="com.ebay.pulsar.analytics.datasource.PulsarRestMetricMeta">
+		<property name="metricName" value="newusers" />
+		<property name="metricEndpoints">
+			<set>
+				<value>core</value>
+			</set>
+		</property>
+		<property name="tableName" value="session" />
+		<property name="druidFilter"><null/></property>
+		<property name="druidHaving"><null/></property>
+		<property name="druidAggregators">
+			<list>
+				<ref bean="aggrNewUsers"/>
+			</list>
+		</property>
+		<property name="druidPostAggregators">
+			<null/>
+		</property>
+	</bean>
+
+	<!--
+	======================================================================
+	== Define "bounces" metric
+	======================================================================
+	  -->
+
+	<bean id="metricBounces" class="com.ebay.pulsar.analytics.datasource.PulsarRestMetricMeta">
+		<property name="metricName" value="bounces" />
+		<property name="metricEndpoints">
+			<set>
+				<value>core</value>
+			</set>
+		</property>
+		<property name="tableName" value="session" />
+		<property name="druidFilter">
+			<ref bean="pageCtOne"/>
+		</property>
+		<property name="druidHaving"><null/></property>
+		<property name="druidAggregators">
+			<list>
+				<ref bean="longSumBounces"/>
+			</list>
+		</property>
+		<property name="druidPostAggregators">
+			<null/>
+		</property>
+	</bean>
+
+	<!--
+	======================================================================
+	== Define "totalpages" metric
+	======================================================================
+	  -->
+
+	<bean id="metricTotalPages" class="com.ebay.pulsar.analytics.datasource.PulsarRestMetricMeta">
+		<property name="metricName" value="totalpages" />
+		<property name="metricEndpoints">
+			<set>
+				<value>core</value>
+			</set>
+		</property>
+		<property name="tableName" value="session" />
+		<property name="druidFilter"><null/></property>
+		<property name="druidHaving"><null/></property>
+		<property name="druidAggregators">
+			<list>
+				<ref bean="aggrTotalPages"/>
+			</list>
+		</property>
+		<property name="druidPostAggregators">
+			<null/>
+		</property>
+	</bean>
+
+	<!--
+	======================================================================
+	== Define "totalsessiondurations" metric
+	======================================================================
+	  -->
+
+	<bean id="metricTotalSessionDurations" class="com.ebay.pulsar.analytics.datasource.PulsarRestMetricMeta">
+		<property name="metricName" value="totalsessiondurations" />
+		<property name="metricEndpoints">
+			<set>
+				<value>core</value>
+			</set>
+		</property>
+		<property name="tableName" value="session" />
+		<property name="druidFilter"><null/></property>
+		<property name="druidHaving"><null/></property>
+		<property name="druidAggregators">
+			<list>
+				<ref bean="aggrTotalSessionDurations"/>
+			</list>
+		</property>
+		<property name="druidPostAggregators">
+			<null/>
+		</property>
+	</bean>
+
+	<!--
+	======================================================================
+	== Define "entrances" & "exit" metric Druid Aggregators
+	======================================================================
+	  -->
+
+	<bean id="longSumEntrances" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.LongSumAggregator">
+		<constructor-arg type="java.lang.String" value="entrances"/>
+		<constructor-arg type="java.lang.String" value="count"/>
+	</bean>
+
+	<!-- Define "entrances" metric Aggregate "entrances" Here -->
+
+	<bean id="aggrEntrances" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.FilteredAggregator">
+		<constructor-arg type="java.lang.String" value="entrances"/>
+		<constructor-arg ref="notFilterPageCtZero"/>
+		<constructor-arg ref="longSumEntrances"/>
+	</bean>
+
+	<bean id="postFieldEntrances" class="com.ebay.pulsar.analytics.metricstore.druid.postaggregator.FieldAccessorPostAggregator">
+		<constructor-arg type="java.lang.String" value="entrances"/>
+		<constructor-arg type="java.lang.String" value="entrances"/>
+	</bean>
+
+	<bean id="listPostFieldsEntryBounceRate" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<ref bean="postFieldBounces"/>
+				<ref bean="postFieldEntrances"/>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<!-- Define "sessions" metric PostAggregate "newsessionrate" Here -->
+
+	<bean id="postAggrEntryBounceRate" class="com.ebay.pulsar.analytics.metricstore.druid.postaggregator.ArithmeticPostAggregator">
+		<constructor-arg type="java.lang.String" value="bouncerate"/>
+		<constructor-arg type="java.lang.String" value="/"/>
+		<constructor-arg ref="listPostFieldsEntryBounceRate"/>
+	</bean>
+
+	<!-- Define "exits" metric Aggregate "exits" Here -->
+
+	<bean id="longSumExits" class="com.ebay.pulsar.analytics.metricstore.druid.aggregator.LongSumAggregator">
+		<constructor-arg type="java.lang.String" value="exits"/>
+		<constructor-arg type="java.lang.String" value="count"/>
+	</bean>
+
+	<!--
+	======================================================================
+	== Define "entrances" metric
+	======================================================================
+	  -->
+
+	<bean id="metricEntrances" class="com.ebay.pulsar.analytics.datasource.PulsarRestMetricMeta">
+		<property name="metricName" value="entrances" />
+		<property name="metricEndpoints">
+			<set>
+				<value>core</value>
+			</set>
+		</property>
+		<property name="tableName" value="session" />
+		<property name="druidFilter"><null/></property>
+		<property name="druidHaving"><null/></property>
+		<property name="druidAggregators">
+			<list>
+				<ref bean="aggrEntrances"/>
+				<ref bean="aggrBounces"/>
+			</list>
+		</property>
+		<property name="druidPostAggregators">
+			<list>
+				<ref bean="postAggrEntryBounceRate"/>
+			</list>
+		</property>
+	</bean>
+
+
+	<!--
+	======================================================================
+	== Define "exits" metric
+	======================================================================
+	  -->
+
+	<bean id="metricExits" class="com.ebay.pulsar.analytics.datasource.PulsarRestMetricMeta">
+		<property name="metricName" value="exits" />
+		<property name="metricEndpoints">
+			<set>
+				<value>core</value>
+			</set>
+		</property>
+		<property name="tableName" value="session" />
+		<property name="druidFilter"><null/></property>
+		<property name="druidHaving"><null/></property>
+		<property name="druidAggregators">
+			<list>
+				<ref bean="longSumExits"/>
+			</list>
+		</property>
+		<property name="druidPostAggregators">
+			<null/>
+		</property>
+	</bean>
+	
+	<bean id = "PulsarRestMetricRegistry" class ="com.ebay.pulsar.analytics.datasource.PulsarRestMetricRegistry">
+		<constructor-arg>
+			<list>
+				<ref bean="metricActiveUsers"/>
+				<ref bean="metricPageViews"/>
+				<ref bean="metricScreenViews"/>
+				<ref bean="metricPulsarEvents"/>
+				<ref bean="metricSessions"/>
+				<ref bean="metricBounces"/>
+				<ref bean="metricNewUsers"/>
+				<ref bean="metricTotalSessionDurations"/>
+				<ref bean="metricTotalPages"/>
+				<ref bean="metricEntrances"/>
+				<ref bean="metricExits"/>
+			</list>
+		</constructor-arg>
+	</bean>
+	
+</beans>

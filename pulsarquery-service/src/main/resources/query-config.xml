@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright © 2012-2015 eBay Software Foundation
+This program is dual licensed under the MIT and Apache 2.0 licenses.
+Please see LICENSE for more information.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd" default-lazy-init="false">
+    <bean id="CacheConfig" class="com.ebay.pulsar.analytics.cache.CacheConfig">
+        <property name="useCache" value="${pulsarquery.cache.use.cache}" />
+        <property name="populateCache" value="${pulsarquery.cache.populate.cache}" />
+        <property name="unCacheable">
+                <value>${pulsarquery.cache.uncache}</value>
+        </property>
+        <property name="expirations">
+            <map>
+                <entry key="core" value="${pulsarquery.cache.expiration.core}" />
+                <entry key="realtime" value="${pulsarquery.cache.expiration.realtime}" />
+                <entry key="sql" value="${pulsarquery.cache.expiration.sql}" />
+                <entry key="today" value="${pulsarquery.cache.expiration.today}" />
+                <entry key="yesterday" value="${pulsarquery.cache.expiration.yesterday}" />
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="MemcachedCacheConfig" class="com.ebay.pulsar.analytics.cache.MemcachedCacheConfig">
+        <property name="timeout" value="${pulsarquery.memcached.op.timeout}" />
+        <property name="maxObjectSize" value="${pulsarquery.memcached.op.max.object.size}" />
+        <property name="readBufferSize" value="${pulsarquery.memcached.op.read.buffer.size}" />
+        <property name="memcachedPrefix" value="${pulsarquery.memcached.key.prefix}" />
+        <property name="maxOperationQueueSize" value="${pulsarquery.memcached.max.operation.queue.size}" />
+        <property name="hosts">
+            <value>${pulsarquery.memcached.hosts}</value>
+        </property>
+    </bean>
+    
+    <bean id="CacheProvider" class="com.ebay.pulsar.analytics.cache.CacheProvider">
+        <property name="type" value="memcached" />
+        <property name="cacheConfig" ref="CacheConfig" />
+        <property name="memConfig" ref="MemcachedCacheConfig" />
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod" value="com.ebay.pulsar.analytics.resources.CachingResource.setCacheProvider" />
+        <property name="arguments">
+            <list>
+                <ref bean="CacheProvider"/>
+            </list>
+        </property>
+    </bean>
+        
+    <bean id="PulsarQueryBootstrap" class="com.ebay.pulsar.analytics.resources.init.PulsarQueryBootstrap">
+        <constructor-arg index = "0">
+             <list>
+                <value>com.ebay.pulsar.analytics.datasource.DruidDataSourceProviderFactory</value>
+                <value>com.ebay.pulsar.analytics.datasource.PulsarDataSourceProviderFactory</value>
+            </list>
+        </constructor-arg>
+        <constructor-arg index = "1" ref="PulsarDataSourceConfiguration" />
+    </bean>
+
+    <!-- those beans don't have to be registered here, just to enable spring security -->
+    <bean id="DruidDataSourceProviderFactory" factory-method="getInstance" class="com.ebay.pulsar.analytics.datasource.DruidDataSourceProviderFactory">
+    	 <property name="processor" ref="DruidQueryProcessor" />
+    </bean>
+    <bean id="DruidQueryProcessor" class="com.ebay.pulsar.analytics.metricstore.druid.query.DruidQueryProcessor">
+    </bean>
+    
+</beans>

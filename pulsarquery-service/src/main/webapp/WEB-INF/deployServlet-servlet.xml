@@ -1,0 +1,44 @@
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd">
+		
+	<mvc:annotation-driven/>
+	<context:component-scan base-package="com.ebay.pulsar.analytics.controller" />
+	<mvc:resources mapping="/admin/*" location="/WEB-INF/" />
+
+	<bean id="myResourceHandler" name="myResourceHandler"
+		class="org.springframework.web.servlet.resource.ResourceHttpRequestHandler">
+		<property name="locations" value="/webapp/WEB-INF/" />
+		<property name="supportedMethods">
+			<list>
+				<value>GET</value>
+				<value>POST</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix">
+			<value>/WEB-INF/jsp/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+	</bean>
+
+	<bean id="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="1" />
+		<property name="maxPoolSize" value="5" />
+		<property name="WaitForTasksToCompleteOnShutdown" value="false" />
+	</bean>
+</beans>

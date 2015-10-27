@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright © 2012-2015 eBay Software Foundation
+This program is licensed under the Apache 2.0 licenses.
+Please see LICENSE for more information.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns:c="http://www.springframework.org/schema/c"
+ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd " default-lazy-init="false">
+
+	<bean id="PulsarDataSourceConfiguration" class="com.ebay.pulsar.analytics.datasource.PulsarDataSourceConfiguration">
+		<constructor-arg index="0" value="PULSARHOLAP"/>
+      	<constructor-arg index="1" value="event"/>
+      	<constructor-arg index="2" value="event"/>
+		<property name="pulsarTableConfiguration" ref="ListTables" />
+		<property name="excludeTableSets" >
+			<set>
+				<value>epsession</value>
+				<value>pulsar_ogmb_m</value>
+			</set>
+		</property>
+		<property name="routConfiguration" >
+			<map>
+				<entry key="event">
+					<bean class="com.ebay.pulsar.analytics.datasource.PulsarDataSourceRule">
+						 <constructor-arg index="0" value="druid"/>
+						 <constructor-arg index="1" value="P1M"/>
+					</bean>
+				</entry>
+				<entry key="session">
+					<bean class="com.ebay.pulsar.analytics.datasource.PulsarDataSourceRule">
+						 <constructor-arg index="0" value="druid"/>
+						 <constructor-arg index="1" value="P1M"/>
+					</bean>
+				</entry>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="ListTables" class="java.util.ArrayList">
+		<constructor-arg>
+			<list>
+				<ref bean="TableEvent"/>
+				<ref bean="TableSession"/>
+				<ref bean="TableAttribution"/>
+			</list>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="TableEvent" class="com.ebay.pulsar.analytics.datasource.PulsarTable">
+		<property name="tableName" value="event" />
+		<property name="tableNameAlias" value="pulsar_event,pc_event" />
+		<property name="dimensions">
+			<list>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="page" />
+					<property name="alias" value="pageid" />
+				</bean>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="site" />
+					<property name="alias" value="tenantsite" />
+				</bean>
+			</list>
+		</property>
+		<property name="metrics">
+			<list>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="pageview" />
+					<property name="alias" value="count,page_view" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="TableSession" class="com.ebay.pulsar.analytics.datasource.PulsarTable">
+		<property name="tableName" value="session" />
+		<property name="tableNameAlias" value="pulsar_session,pc_session" />
+		<property name="dimensions">
+			<list>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="site" />
+					<property name="alias" value="tenantsite" />
+				</bean>
+			</list>
+		</property>
+		<property name="metrics">
+			<list>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="session" />
+					<property name="alias" value="count,streamid" />
+				</bean>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="sessionduration" />
+					<property name="alias" value="sessionduration_ag,absduration" />
+				</bean>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="totalpagect" />
+					<property name="alias" value="totalpagect_ag,serveventcnt" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="TableAttribution" class="com.ebay.pulsar.analytics.datasource.PulsarTable">
+		<property name="tableName" value="pulsar_ogmb" />
+		<property name="dimensions">
+			<list>
+				<bean class="com.ebay.pulsar.analytics.datasource.PulsarTableDimension">
+					<property name="name" value="_cpgnname" />
+					<property name="multiValue" value="true" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+</beans>
+

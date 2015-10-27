@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright © 2012-2015 eBay Software Foundation
+This program is dual licensed under the MIT and Apache 2.0 licenses.
+Please see LICENSE for more information.
+  -->
+
+<configuration>
+    <substitutionProperty name="default_pattern" value="%date %-5level %logger{40} - %msg%n" />
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoding>UTF-8</encoding>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${default_pattern}</pattern>
+        </layout>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoding>UTF-8</encoding>
+        <file>${catalina.home}/logs/pulsar-query.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${catalina.home}/logs/pulsar-query.log.%d{yyyy-MM-dd}</fileNamePattern>
+            <maxHistory>15</maxHistory>
+        </rollingPolicy>
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>${default_pattern}</pattern>
+        </layout>
+    </appender>
+    
+    <logger name="com.shengpay.sars.monitor">
+        <level value="WARN" />
+    </logger>
+    
+    <logger name="org.hibernate.validator">
+        <level value="WARN" />
+    </logger>
+    
+    <logger name="org.springframework">
+        <level value="WARN" />
+    </logger>
+        
+    <logger name="org.apache.commons">
+        <level value="ERROR" />
+    </logger>
+    
+    <logger name="org.eclipse.jetty">
+        <level value="INFO" />
+    </logger>
+
+    <root level="WARN">
+        <appender-ref ref="STDOUT" />
+        <appender-ref ref="FILE" />
+    </root>
+    
+</configuration>
