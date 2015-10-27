@@ -73,12 +73,6 @@ Please see LICENSE for more information.
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
-		<!-- MySQL driver -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
-		
 		<!-- derby -->
 		<dependency>
 			<groupId>org.apache.derby</groupId>
