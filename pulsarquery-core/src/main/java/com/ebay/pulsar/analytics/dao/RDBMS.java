@@ -5,7 +5,6 @@
 *******************************************************************************/
 package com.ebay.pulsar.analytics.dao;
 
-import java.sql.Blob;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,7 +26,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.KeyHolder;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 
 public class RDBMS {

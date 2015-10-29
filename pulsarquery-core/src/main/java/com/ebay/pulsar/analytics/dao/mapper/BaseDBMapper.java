@@ -8,6 +8,7 @@ package com.ebay.pulsar.analytics.dao.mapper;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.math.BigInteger;
@@ -66,7 +67,13 @@ public class BaseDBMapper<T> implements RowMapper<T> {
 	                    	}else if(value.getClass().equals(byte[].class)){
 	                    		setter.invoke(obj, new String((byte[])value));
 	                    	}else if(Blob.class.isAssignableFrom(value.getClass())){
-	                    		setter.invoke(obj, ((Blob)value).toString());
+	                    		Blob bv=(Blob)value;
+	                    		 byte[] b = new byte[(int)bv.length()];
+	                    		 InputStream stream = bv.getBinaryStream();
+	                    		 stream.read(b);
+	                    		 stream.close();
+	                    		String v=new String(b);
+	                    		setter.invoke(obj, v);
 	                    	}else{
 	                    		setter.invoke(obj, value);
 	                    	}

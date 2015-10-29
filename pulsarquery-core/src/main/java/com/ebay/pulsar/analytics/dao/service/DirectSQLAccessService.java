@@ -48,7 +48,7 @@ public class DirectSQLAccessService {
 		return FluentIterable.from(rights3).transform( new Function<String,String>(){
 			@Override
 			public String apply(String input) {
-				return input+"_MANAGEG";
+				return input+"_MANAGE";
 			}
 		}).append(rights1).append(rights2).toList();
 		
