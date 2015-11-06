@@ -6,7 +6,7 @@
 	<groupId>com.ebay.pulsar</groupId>
 	<artifactId>data-analytics-api</artifactId>
 	<packaging>pom</packaging>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.2.0</version>
 	<name>data-analytics-api</name>
 
 	<description>Pulsar Data Analytics API</description>

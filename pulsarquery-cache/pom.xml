@@ -12,7 +12,7 @@ Please see LICENSE for more information.
 	<parent>
 		<groupId>com.ebay.pulsar</groupId>
 		<artifactId>data-analytics-api</artifactId>
-		<version>0.2-SNAPSHOT</version>
+		<version>0.2.0</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<description>Pulsar Query Cache</description>
