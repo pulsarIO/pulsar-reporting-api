@@ -692,7 +692,6 @@ public class SQLTranslatorTest{
 		Mockito.when(node.getAggregateName()).thenReturn("count");
 		Mockito.when(node.isDistinct()).thenReturn(true);
 		NumericConstantNode nNode=new NumericConstantNode();
-		nNode.init("test",0);
 		Mockito.when(node.getOperand()).thenReturn(nNode);
 		TableDimension dimension = new TableDimension();
 		dimension.setName("testDim");
@@ -732,7 +731,6 @@ public class SQLTranslatorTest{
 		Mockito.when(node.getAggregateName()).thenReturn("count");
 		Mockito.when(node.isDistinct()).thenReturn(true);
 		NumericConstantNode nNode=new NumericConstantNode();
-		nNode.init("test",0);
 		nNode.setValue(2);
 		Mockito.when(node.getOperand()).thenReturn(nNode);
 		TableDimension dimension = new TableDimension();
@@ -773,7 +771,6 @@ public class SQLTranslatorTest{
 		Mockito.when(node.getAggregateName()).thenReturn("count");
 		Mockito.when(node.isDistinct()).thenReturn(true);
 		NumericConstantNode nNode=new NumericConstantNode();
-		nNode.init("test",0);
 		nNode.setValue("test");
 		Mockito.when(node.getOperand()).thenReturn(nNode);
 		TableDimension dimension = new TableDimension();
@@ -853,7 +850,6 @@ public class SQLTranslatorTest{
 		Mockito.when(node.getAggregateName()).thenReturn("count");
 		Mockito.when(node.isDistinct()).thenReturn(true);
 		NumericConstantNode nNode=new NumericConstantNode();
-		nNode.init("test",0);
 		nNode.setValue(1);
 		Mockito.when(node.getOperand()).thenReturn(nNode);
 		TableDimension dimension = new TableDimension();
@@ -901,11 +897,9 @@ public class SQLTranslatorTest{
 		BinaryArithmeticOperatorNode node =Mockito.mock(BinaryArithmeticOperatorNode.class);
 
 		NumericConstantNode nNode=new NumericConstantNode();
-		nNode.init("test",0);
 		nNode.setValue(1);
 		
 		NumericConstantNode rNode=new NumericConstantNode();
-		rNode.init("test",0);
 		rNode.setValue(1);
 		Mockito.when(node.getLeftOperand()).thenReturn(nNode);
 		Mockito.when(node.getRightOperand()).thenReturn(rNode);
@@ -957,7 +951,6 @@ public class SQLTranslatorTest{
 		Mockito.when(nNode.getColumnName()).thenReturn("testdim");
 		
 		NumericConstantNode rNode=new NumericConstantNode();
-		rNode.init("test",0);
 		rNode.setValue(1);
 		Mockito.when(node.getLeftOperand()).thenReturn(nNode);
 		Mockito.when(node.getRightOperand()).thenReturn(nNode);
@@ -1009,7 +1002,6 @@ public class SQLTranslatorTest{
 		Mockito.when(nNode.getColumnName()).thenReturn("testdim");
 		
 		NumericConstantNode rNode=new NumericConstantNode();
-		rNode.init("test",0);
 		rNode.setValue(1);
 		Mockito.when(node.getLeftOperand()).thenReturn(nNode);
 		Mockito.when(node.getRightOperand()).thenReturn(nNode);

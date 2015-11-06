@@ -60,8 +60,6 @@ public class DatasourceServiceTest {
 	public static final String uttestuser="uttestqxing";		
 	public static final String uttestdatasource1="uttestdatasource1";		
 	public static final String uttestdatasource2="uttestdatasource2";		
-	public static final String driver2="com.mysql.jdbc.Driver";		
-	public static final String url="jdbc:mysql://10.64.219.221:3306/pulsario";		
 	public static final String userName="root";		
 	public static final String userPwd="";		
 	@Before		
